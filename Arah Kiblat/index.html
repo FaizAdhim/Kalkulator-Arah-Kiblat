@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <title>Arah Kiblat</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-image: url(BG.jpg);
+            background-size: cover;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            background: transparent;
+            padding: 20px;
+            background: transparent;
+            backdrop-filter: blur(5px);
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0);
+            text-align: center;
+            width: 300px;
+        }
+        h1 {
+            font-size: 24px;
+            margin-bottom: 10px;
+            color: white;
+        }
+        label {
+            display: block;
+            margin: 10px 0 5px;
+            font-size: 14px;
+            color: #e3e3e3;
+        }
+        input {
+            width: 90%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            width: 97%;
+            padding: 10px;
+            background-color: transparent;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+            transition: color 0.5s;
+        }
+        .result {
+            margin-top: 20px;
+            font-size: 16px;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Arah Kiblat</h1>
+        <label for="latitude">Lintang Lokasi (°)</label>
+        <input type="number" id="latitude" placeholder="Contoh: -6.2000">
+        <label for="longitude">Bujur Lokasi (°)</label>
+        <input type="number" id="longitude" placeholder="Contoh: 106.8167">
+        <button onclick="calculateQibla()">Hitung Arah Kiblat</button>
+        <div class="result" id="result"></div>
+    </div>
+    <script>
+
+        //Enter untuk menjalankan fungsi
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter') {
+                calculateQibla();
+            }
+        });
+
+        function calculateQibla() {
+            // Koordinat Ka'bah
+            const kaabaLat = 21.4225; // Lintang Ka'bah
+            const kaabaLon = 39.8262; // Bujur Ka'bah
+
+            // Input dari pengguna
+            const userLat = parseFloat(document.getElementById("latitude").value);
+            const userLon = parseFloat(document.getElementById("longitude").value);
+
+            if (isNaN(userLat) || isNaN(userLon)) {
+                document.getElementById("result").textContent = "Silakan masukkan koordinat yang valid.";
+                return;
+            }
+
+            // Konversi derajat ke radian
+            const toRadians = (deg) => (deg * Math.PI) / 180;
+
+            // Konversi ke radian
+            const lat1 = toRadians(userLat);
+            const lon1 = toRadians(userLon);
+            const lat2 = toRadians(kaabaLat);
+            const lon2 = toRadians(kaabaLon);
+
+            // Rumus trigonometri bola untuk menghitung arah kiblat
+            const deltaLon = lon2 - lon1;
+            const x = Math.cos(lat2) * Math.sin(deltaLon);
+            const y =
+                Math.cos(lat1) * Math.sin(lat2) -
+                Math.sin(lat1) * Math.cos(lat2) * Math.cos(deltaLon);
+
+            const qiblaAngle = Math.atan2(x, y); // Dalam radian
+            const qiblaDegree = (qiblaAngle * 180) / Math.PI; // Dalam derajat
+
+            // Pastikan hasil dalam rentang 0-360 derajat
+            const qiblaDirection = (qiblaDegree + 360) % 360;
+
+            // Tampilkan hasil
+            document.getElementById("result").textContent =
+                "Arah Kiblat: " + qiblaDirection.toFixed(2) + "° dari Utara.";
+        }
+    </script>
+</body>
+</html>
